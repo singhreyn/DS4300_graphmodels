@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(pip3 install:*)",
+      "Bash(which redis-server:*)",
+      "Bash(/Users/benoitschiermeier/opt/redis/redis-stable/src/redis-server --daemonize yes 2>&1)",
+      "Bash(mysql:*)",
+      "Read(//usr/local/mysql/bin/**)",
+      "Read(//usr/local/**)",
+      "Read(//opt/**)"
+    ]
+  }
+}

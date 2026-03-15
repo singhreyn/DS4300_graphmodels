@@ -1,0 +1,40 @@
+DS4300 HW4 - Graph Query Output
+=================================
+
+-- a. What is the sum of all book prices?
++------------------+
+| total_book_price |
++------------------+
+|           253.45 |
++------------------+
+
+-- b. What people does Spencer know?
++---------+
+| name    |
++---------+
+| Emily   |
+| Brendan |
++---------+
+
+-- c. What books did Spencer buy? (title and price)
++-----------------+-------+
+| title           | price |
++-----------------+-------+
+| Cosmos          |    17 |
+| Database Design |   195 |
++-----------------+-------+
+
+-- d. What people know each other? (pairs)
++---------+---------+
+| person1 | person2 |
++---------+---------+
+| Emily   | Spencer |
++---------+---------+
+
+-- e. Book recommendations for Spencer
+-- (Books bought by people Spencer knows, excluding Spencer's books)
++------------------+
+| recommended_book |
++------------------+
+| DNA and you      |
++------------------+
