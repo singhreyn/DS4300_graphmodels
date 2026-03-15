@@ -10,28 +10,26 @@ class GraphAPI:
         self.r = redis.Redis(host=host, port=port, db=db, decode_responses=True)
 
     def reset(self):
-        """Flush the database."""
         self.r.flushdb()
 
     def add_node(self, name, node_type, properties=None):
-        """Add a node with a given name, type, and optional properties."""
+    # store node as a hash and track it in a set by type
         node_key = f"node:{name}"
         self.r.hset(node_key, "type", node_type)
         if properties:
             for k, v in properties.items():
                 self.r.hset(node_key, k, v)
-        # Track node in a set of all nodes of this type
         self.r.sadd(f"nodes:{node_type}", name)
 
     def add_edge(self, name1, name2, edge_type):
-        """Add a directed edge from name1 to name2 of a given type."""
+        """Store a directed edge as a set: edges:{name1}:{edge_type} -> {name2, ...}"""
         # Store adjacency: node name1 has an outgoing edge of edge_type to name2
         self.r.sadd(f"edges:{name1}:{edge_type}", name2)
-        # Also track all edge types from name1
+        # track what edge types exist from name1
         self.r.sadd(f"edge_types:{name1}", edge_type)
 
     def get_adjacent(self, name, node_type=None, edge_type=None):
-        """Get names of adjacent nodes, optionally filtered by node type and/or edge type."""
+        """Return adjacent node names. Can filter by node type and/or edge type."""
         if edge_type:
             edge_types = [edge_type]
         else:
@@ -52,8 +50,7 @@ class GraphAPI:
         return neighbors
 
     def get_recommendations(self, name):
-        """Get books bought by people the given person knows,
-        excluding books already purchased by that person."""
+        """Books bought by friends minus books already owned."""
         # Books this person already bought
         owned = self.get_adjacent(name, node_type='Book', edge_type='bought')
 
