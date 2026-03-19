@@ -21,15 +21,14 @@ class GraphAPI:
                 self.r.hset(node_key, k, v)
         self.r.sadd(f"nodes:{node_type}", name)
 
+    # directed edge stored as a set: edges:{name1}:{edge_type} -> {name2, ...}
     def add_edge(self, name1, name2, edge_type):
-        """Store a directed edge as a set: edges:{name1}:{edge_type} -> {name2, ...}"""
-        # Store adjacency: node name1 has an outgoing edge of edge_type to name2
         self.r.sadd(f"edges:{name1}:{edge_type}", name2)
         # track what edge types exist from name1
         self.r.sadd(f"edge_types:{name1}", edge_type)
 
+    # get neighbors, optionally filtered by node type and/or edge type
     def get_adjacent(self, name, node_type=None, edge_type=None):
-        """Return adjacent node names. Can filter by node type and/or edge type."""
         if edge_type:
             edge_types = [edge_type]
         else:
@@ -49,20 +48,20 @@ class GraphAPI:
 
         return neighbors
 
+    # books bought by friends minus books already owned
     def get_recommendations(self, name):
-        """Books bought by friends minus books already owned."""
-        # Books this person already bought
+        # books this person already bought
         owned = self.get_adjacent(name, node_type='Book', edge_type='bought')
 
-        # People this person knows
+        # people this person knows
         friends = self.get_adjacent(name, node_type='Person', edge_type='knows')
 
-        # Books bought by friends
+        # books bought by friends
         recommended = set()
         for friend in friends:
             friend_books = self.get_adjacent(friend, node_type='Book', edge_type='bought')
             recommended.update(friend_books)
 
-        # Exclude already owned
+        # minus already owned
         recommended -= owned
         return recommended
